@@ -46,7 +46,7 @@
 <section>
   <h1>Simplifying Code</h1>
 
-  <p>https://github.com/tute/refactoring-workshop</p>
+  <p>github.com/tute/refactoring-workshop</p>
 
   <br>
   <small>
@@ -62,18 +62,17 @@
   <aside class="notes">
 
     A <strong>Pattern</strong> is a general reusable solution to a reccurring
-    problem. There's many ways to skin a cat, so how do we do X in this new
-    application? &nbsp; A <strong>Pattern</strong> is a description for how to
-    solve a problem that can be used in many different situations. Patterns
-    are peer-tested best practices.
+    problem. A <strong>Pattern</strong> is a description for how to solve a
+    problem, that can be used in many different situations. Patterns are
+    peer-tested best practices.
 
     <br><br>
 
-    <strong>Refactoring</strong> is restructuring existing code without
-    changing its behavior. Advantages are reduced complexity, more readable
-    code, and easier to maintain. Also useful for creating an expressive
-    architecture, so that our objects reflect objects in the real world,
-    improving cross-teams communications.
+    <strong>Refactoring</strong> is restructuring existing code without changing
+    its observable behavior. Advantages are reduced complexity, more readable
+    code. Code results easier to maintain. Also useful for creating an
+    expressive architecture, so that our objects reflect objects in the real
+    world, improving cross-teams communications.
 
     <br><br>
 
@@ -90,12 +89,25 @@
 
   <aside class="notes">
     <p>
-      I'm very PASSIONATE about refactoring, I think it's POWERFUL in
-      improving productivity and thus enjoying better daily work.
+      I'm very PASSIONATE about refactoring because it's POWERFUL in improving
+      productivity and thus enjoying better daily work.
 
     <p>
-      Code speaks by itself, it's suddenly better than Pivotal Tracker
-      itself or any meeting.
+      Code speaks by itself, it's suddenly better than your project management
+      software or any meeting.
+  </aside>
+</section>
+
+<section>
+  <h1>Today we'll see</h1>
+
+  <ol>
+    <li>Three common software anomalies
+    <li>Refactoring Patterns to address them
+  </ol>
+
+  <aside class="notes">
+    <p>And we start with...
   </aside>
 </section>
 
@@ -105,28 +117,36 @@
 <pre><code data-trim contenteditable>
 # Probably a comment
 if hash[row[1]][date] != row[0]
+  # conditional logic...
 </code></pre>
 
+<div class="fragment">
 vs
 
 <pre><code data-trim contenteditable>
 if remove_duplicates?
+  # conditional logic...
+
+def remove_duplicates?
+  hash[row[1]][date] != row[0]
 </code></pre>
+</div>
 
   <aside class="notes" data-markdown>
     * Responsability of the code vs implementation details.
     * Comments show at least what was in our mind when we wrote it.
-    * Comment are fragile: we edit the code and may forget to update the
-    comments when we see it working. "Lies waiting to happen".
-    * Code is like jokes, when you have to explain/comment it can lose it's charm.
+    * But comments are fragile: we edit the code and may forget to update the
+    comments that described previous version. "Lies waiting to happen".
+    * Code is like jokes: if you have to explain it, it will lose it's charm.
+
     * Idea: Extract relevant concepts into methods with proper names.
     * Most relevant responsibilities should be at the top
-    * Code now reads itself, which is the most beautiful thing we can
+    * Code now reads itself, which is the MOST BEAUTIFUL thing we can
     achieve. The Ruby language takes pride on this: it does what you think it
     does.
-    * Code grows with more lines, but also readability. It's arguably shorter to
-    read, cause we don't really need to see how do we compute if there's
-    duplicates (implementation, low-level detail).
+    * Code grows with more lines, but also readability. It's shorter to read,
+    because we don't need to see the computation for duplicates, nor what that
+    implementation, low-level detail means.
   </aside>
 </section>
 
@@ -137,6 +157,10 @@ if remove_duplicates?
   <p>Transform comments into <span style="color:blue">methods</span>
   <p>Comments are now <span style="color:green">code</span>.<br>
     Code <span style="color:green">describes</span> itself.
+
+  <aside class="notes" data-markdown>
+    Apply this syntactical change to the exercise. Let's work!
+  </aside>
 </section>
 
 <section>
@@ -155,8 +179,9 @@ if remove_duplicates?
 </section>
 
 <section data-transition="none">
-  <h3>Intention Revealing Method</h3>
-  <p>It's arguably the <span style="color:green">easiest</span> pattern.</p>
+  <h2>Intention Revealing Method</h2>
+
+  <p>It's the <span style="color:green">simplest</span> pattern.</p>
 
   <div class="fragment">
     <img src="imgs/naming.png">
@@ -178,6 +203,10 @@ if remove_duplicates?
 
     Apply changes, see before and after, does it look better? Keep it. Does it
     not? Ignore it, you anyway learned something about your code!
+
+    <br><br>
+
+    Questions?
   </aside>
 </section>
 
@@ -191,7 +220,18 @@ if remove_duplicates?
   <p><span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
     <small>Refactor big methods at ease in a clean new container</small></p>
 
-  <p>Questions time!</p>
+  <p>4. Questions time!</p>
+</section>
+
+<section data-transition="none">
+  <h1>2: Ohai, nil!</h1>
+
+<pre><code data-trim contenteditable>
+> current_user.name
+NoMethodError: undefined method `name' for nil:NilClass
+        from (irb):3
+        from /Users/tute/.rbenv/versions/2.2.3/bin/irb:11:in `&lt;main&gt;'
+</code></pre>
 </section>
 
 <section data-transition="none">
@@ -200,16 +240,16 @@ if remove_duplicates?
   <code style="color: blue; font-size: 140%">Undefined method `name' for nil</code>
 
 <pre><code data-trim contenteditable>
-session[:current_user]     # => nil
-session[:current_dinozauh] # => nil
-if false then 1 end        # => nil
-empty_method()             # => nil
+session[:current_user]      # => nil
+session[:current_dinozauh]  # => nil
+if false then 1 end         # => nil
+empty_method()              # => nil
 </code></pre>
 
   <aside class="notes">
 
     Where did this nil come from in my whole code base? From a blog post? From
-    a user? From a car or whatever?
+    a user? From a category?
 
     <br><br>
 
@@ -239,13 +279,17 @@ current_user.email
 
   <aside class="notes">
     Now we can find in project that symbol and trace the unexpected nil.
+
+    <br><br>
+
+    So we were expecting a user, not a category
   </aside>
 </section>
 
 <section data-transition="none">
   <h1>2: ifs everywhere</h1>
 
-  <p>If potentially <code style="color:red">nil</code>, got to surround
+  <p>If potentially <code style="color:red">nil</code>, gotta surround
   with an <code style="color:blue">if</code></p>
   <pre><code data-trim contenteditable>
 if current_user
@@ -261,8 +305,17 @@ end
 
     <br><br>
 
-    Easy to forget them. The logic of what does it mean an object
-    is nil is scattered accross the entire application.
+    Easy to forget them. The logic of what does it mean for an object to be nil
+    is scattered accross the entire application.
+
+    <br><br>
+
+    A change on this logic needs to happen on many places of the app at once, a
+    problem we call "shotgun surgery".
+
+    <br><br>
+
+    What will we do?
 
   </aside>
 </section>
@@ -274,6 +327,11 @@ end
     <span style="color:green">object</span></p>
 
 <pre><code data-trim contenteditable>
+def current_user
+  User.find_by(id: id) || NullUser.new
+end
+</code></pre>
+<pre><code data-trim contenteditable>
 class NullUser
   def name
     'guest'
@@ -281,12 +339,11 @@ class NullUser
 end
 </code></pre>
 <pre><code data-trim contenteditable>
-def current_user
-  User.find_by_id(id) || NullUser.new
-end
-</code></pre>
-<pre><code data-trim contenteditable>
-"Ohai, #{current_user.name}!"
+# if current_user
+  "Hi #{current_user.name}!"
+# else
+#   "Hi guest!"
+# end
 </code></pre>
 </section>
 
@@ -304,7 +361,7 @@ end
   <p>-> <span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
     <small>Refactor big methods at ease in a clean new container</small></p>
 
-  <p>Questions time!</p>
+  <p>4. Questions time!</p>
 </section>
 
 <section>
@@ -314,8 +371,9 @@ end
 class ExportJob
   # Instance variables
   # Many other methods
+  #
   # And...
-  def row_per_day_format(file_name)
+  def self.row_per_day_format(file_name)
     file = File.open file_name, 'r:ISO-8859-1'
     # hash[NivelConsistencia][date] = [[value, status]]
     hash = { '1' => {}, '2' => {} }
@@ -374,12 +432,13 @@ class ExportJob
     <br><br>
 
     Refactoring a big method is hard because there's coupling to behavior in
-    the same class, changes here break something there and you have to
+    the same class. Changes here break something there and you have to
     refactor it as well.
 
     <br><br>
 
-    Extracting Intention Revealing Methods might require too much state to be pass around in arguments
+    Extracting Intention Revealing Methods might require too much state to be
+    passed around as arguments
 
     <br><br>
 
@@ -417,19 +476,6 @@ class ExportJob
 </section>
 
 <section data-transition="none">
-  <p><span style="color:blue">1. Unreadable Code -> Intention Revealing Method</span>
-    <small>Turns comments unnecessary. Code readsdescribes itself.</small></p>
-
-  <p><span style="color:blue">2. Undefined Method on nil -> Null Objects</span><br>
-    <small>Avoids <code>nil</code> objects and associated conditionals</small></p>
-
-  <p><span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
-    <small>Refactor big methods at ease in a clean new container</small></p>
-
-  <p>Questions time!</p>
-</section>
-
-<section data-transition="none">
   <h1>Next Steps: "<a target="_blank" href="http://robots.thoughtbot.com/sandi-metz-rules-for-developers">4 rules</a>"</h1>
 
   <p>Classes of <span style="color:green">at most 100 lines of code</span>
@@ -448,11 +494,25 @@ class ExportJob
   </aside>
 </section>
 
+
+<section data-transition="none">
+  <p><span style="color:blue">1. Unreadable Code -> Intention Revealing Method</span>
+    <small>Turns comments unnecessary. Code readsdescribes itself.</small></p>
+
+  <p><span style="color:blue">2. Undefined Method on nil -> Null Objects</span><br>
+    <small>Avoids <code>nil</code> objects and associated conditionals</small></p>
+
+  <p><span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
+    <small>Refactor big methods at ease in a clean new container</small></p>
+
+  <p>4. Questions time!</p>
+</section>
+
 <section data-transition="none">
   <img src="imgs/responsibility.png" width="500">
   <br>
 
-  <p>Questions time!</p>
+  <p>4. Questions time!</p>
 </section>
 
 			</div>
