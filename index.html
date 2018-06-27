@@ -1,13 +1,8 @@
 <!doctype html>
 <html lang="en">
-
 	<head>
 		<meta charset="utf-8">
-
-    <title>Simplifying Code</title>
-
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+    <title>Simplificando Código</title>
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -15,14 +10,28 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
+		<!-- <link rel="stylesheet" href="css/theme/night.css" id="theme"> -->
 		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
 
     <style>
+      body {
+        /* green or 3F3*/
+/*        background: #002;
+        background-color: #002;*/
+      }
+      .reveal h1, .reveal h2 {
+        white-space: nowrap;
+      }
       .reveal section img {
         border: 0;
+      }
+      .reveal pre code {
+        font-size: 2.7em;
+        line-height: 1em;
+        padding: 10px;
       }
     </style>
 
@@ -44,256 +53,276 @@
 			<div class="slides">
 
 <section>
-  <h1>Simplifying Code</h1>
+  <h1>Simplificando<br>Código</h1>
 
-  <p>github.com/tute/refactoring-workshop</p>
+  <p>Tute Costa</p>
 
-  <br>
-  <small>
-    Tute Costa
-    -
-    <a href="http://twitter.com/tutec">@tutec</a>
-  </small>
+  <p>https://github.com/tute/refactoring-workshop</p>
 </section>
 
 <section data-transition="none">
-  <h1>Refactoring Patterns</h1>
+  <h1>Patrones de<br>Refactorización</h1>
 
   <aside class="notes">
-
-    A <strong>Pattern</strong> is a general reusable solution to a reccurring
-    problem. A <strong>Pattern</strong> is a description for how to solve a
-    problem, that can be used in many different situations. Patterns are
-    peer-tested best practices.
-
-    <br><br>
-
-    <strong>Refactoring</strong> is restructuring existing code without changing
-    its observable behavior. Advantages are reduced complexity, more readable
-    code. Code results easier to maintain. Also useful for creating an
-    expressive architecture, so that our objects reflect objects in the real
-    world, improving cross-teams communications.
+    Un PATRON es una SOLUCIÓN REUSABLE para un problema recurrente.<br>
+    Los PATRONES son MEJORES PRÁCTICAS pulidos por una comunidad.
+    Un PATRON es una DESCRIPCIÓN de cómo resolver un problema, que puede ser
+    aplicada en distintas situaciones.
 
     <br><br>
 
-    Refactoring Patterns, then, are...
+    REFACTORIZAR es reestructurar código sin cambiar su comportamiento visible.
+    Ventajas son COMPLEJIDAD REDUCIDA, y mejor LEGIBILIDAD, facilitando el
+    MANTENIMIENTO. También es útil para crear una arquitectura EXPRESIVA, con
+    nuestros programas usando TÉRMINOS del MUNDO REAL, facilitando la
+    COMUNICACIÓN entre distintas personas.
+
+    <br><br>
+
+    Los patrones de refactorización, entonces, son...
   </aside>
 </section>
 
 <section>
-  <h1>Why?</h1>
-
-  <p>Smaller code base</p>
-  <p>Simpler</p>
-  <p>Prettier</p>
-
-  <aside class="notes">
-    <p>
-      I'm very PASSIONATE about refactoring because it's POWERFUL in improving
-      productivity and thus enjoying better daily work.
-
-    <p>
-      Code speaks by itself, it's suddenly better than your project management
-      software or any meeting.
-  </aside>
-</section>
-
-<section>
-  <h1>Today we'll see</h1>
-
+  <h1>Vamos a ver</h1>
   <ol>
-    <li>Three common software anomalies
-    <li>Refactoring Patterns to address them
+    <li>Tres anomalías comunes en software
+    <li>Patrones para refactorizarlas
   </ol>
 
   <aside class="notes">
-    <p>And we start with...
+    Los patrones permiten poner un límite sobre la cantidad de trabajo
   </aside>
 </section>
 
 <section data-transition="none">
-  <h1>1: Unreadable Code</h1>
+  <h1>Vamos a ver</h1>
+
+  <p>👉 <span style="color: #f33">Código confuso</span>
+
+  <p><span style=""><tt>"NoMethodError: Undefined method on nil"</tt></tt>
+
+  <p><span style="">Un Método Gigante</span>
+</section>
+
+<section data-transition="none">
+  <h1>1: Código confuso</h1>
 
 <pre><code data-trim contenteditable>
-# Probably a comment
+# Removes duplicates
 if hash[row[1]][date] != row[0]
-  # conditional logic...
+  # ... code ...
 </code></pre>
 
-<div class="fragment">
+  <aside class="notes" data-markdown>
+    * Como un chiste: si hay que EXPLICARLO, es MALO
+
+    * IDEA: Extraer CONCEPTOS relevantes como MÉTODOS bien nombrados
+    * Una táctica: convertir comentarios en CÓDIGO EJECUTABLE
+  </aside>
+</section>
+
+<section data-transition="none">
+  <h1>1: Código confuso</h1>
+
+<pre><code data-trim contenteditable>
+# Removes duplicates
+if hash[row[1]][date] != row[0]
+  # ... code ...
+</code></pre>
+
 vs
 
 <pre><code data-trim contenteditable>
 if remove_duplicates?
-  # conditional logic...
+  # ... code ...
 
 def remove_duplicates?
   hash[row[1]][date] != row[0]
 </code></pre>
-</div>
 
   <aside class="notes" data-markdown>
-    * Responsability of the code vs implementation details.
-    * Comments show at least what was in our mind when we wrote it.
-    * But comments are fragile: we edit the code and may forget to update the
-    comments that described previous version. "Lies waiting to happen".
-    * Code is like jokes: if you have to explain it, it will lose it's charm.
-
-    * Idea: Extract relevant concepts into methods with proper names.
-    * Most relevant responsibilities should be at the top
-    * Code now reads itself, which is the MOST BEAUTIFUL thing we can
-    achieve. The Ruby language takes pride on this: it does what you think it
-    does.
-    * Code grows with more lines, but also readability. It's shorter to read,
-    because we don't need to see the computation for duplicates, nor what that
-    implementation, low-level detail means.
+    * Lo más IMPORTANTE arriba
+    * El código se DESCRIBE a sí mismo: hace lo que PENSÁS que hace
+    * Puede ganar líneas, pero también legibilidad
+    * Es más "CORTO" de leer: no hay que entender cómo se computan duplicados
+    para inferir lo que hace
+    * Conocen este PATRÓN?
   </aside>
 </section>
 
 <section data-transition="none">
-  <h1>Intention Revealing Method</h1>
+  <h1>Método que revela<br>la intención</h1>
 
-  <p>Add <span style="color:blue">comments</span> when needed
-  <p>Transform comments into <span style="color:blue">methods</span>
-  <p>Comments are now <span style="color:green">code</span>.<br>
-    Code <span style="color:green">describes</span> itself.
+  <p>Agregar <b>comentarios</b> si no tiene
+  <p>Transformarlos en <b>código</b>
+  <p>Los <b>comentarios</b> son ahora <b>ejecutables</b>
+  <p>El código se <b>describe</b> a sí mismo
 
-  <aside class="notes" data-markdown>
-    Apply this syntactical change to the exercise. Let's work!
-  </aside>
 </section>
 
 <section>
-  <img src="imgs/lets-work.png" width="500">
+  <img src="imgs/lets-work-rosie the riveter.jpg" width="500">
 </section>
 
 <section data-transition="none">
   <h2>
-    Comments are now code<br>
-    Code <span style="color:green">describes</span> itself
+    Los comentarios son código
+    <br><br>
+    El código se describe a sí mismo
   </h2>
 
   <br>
 
-  <h1><span style="color:green">MASSIVE SUCCESS</span><h1>
+  <h1><span style="color: green">EXITO TOTAL</span><h1>
+
+  <aside class="notes" data-markdown>
+    El código debería leerse como un artículo de un diario, que va de lo más importante a detalles de menor relevancia
+  </aside>
 </section>
 
 <section data-transition="none">
-  <h2>Intention Revealing Method</h2>
+  <h2>Método que revela la intención</h2>
 
-  <p>It's the <span style="color:green">simplest</span> pattern.</p>
+  <p>Es el patrón más <b style="color: green">simple</b></p>
 
   <div class="fragment">
     <img src="imgs/naming.png">
-    <p>But the <span style="color:red">hardest</span> as well.</p>
+    <p>Pero también el más <b style="color:#f33">difícil</b></p>
   </div>
 
-  <aside class="notes">
-    Seemingly the easiest pattern (simple syntactical transformations), but
-    also the hardest because it implies naming
+  <aside class="notes" data-markdown>
+    Parece el patrón más fácil (transformaciones sintácticas), pero es el más difícil, porque implica NOMBRAR cosas
 
-    <br><br>
+    Dos problemas GRANDES en Computación: invalidar caches y poner nombres
 
-    And not only naming, but also deciding on the levels of
-    abstraction of the code: what counts as your app's responsability and
-    what as mere implementation details? How do we model the objects of the
-    real world into running OO software?
+    Y no sólo nombrar, también decidir niveles de ABSTRACCIÓN:
 
-    <br><br>
-
-    Apply changes, see before and after, does it look better? Keep it. Does it
-    not? Ignore it, you anyway learned something about your code!
-
-    <br><br>
-
-    Questions?
+    * ¿Qué cuenta como RESPONSABILIDAD DEL NEGOCIO y qué como mero DETALLE DE
+    IMPLEMENTACIÓN?
+    * ¿Cómo modelamos cosas del mundo real en código en la computadora?
   </aside>
 </section>
 
 <section data-transition="none">
-  <p><span style="color:blue">1. Unreadable Code -> Intention Revealing Method</span>
-    <small>Turns comments unnecessary. Code readsdescribes itself.</small></p>
+  <h2>Método que revela la intención</h2>
 
-  <p>-> <span style="color:blue">2. Undefined Method on nil -> Null Objects</span><br>
-    <small>Avoids <code>nil</code> objects and associated conditionals</small></p>
+  <img src="imgs/lo-que-facilita-el-diseno.png" width="400">
+  <br>
+  El diseño puede prescindir de instrucciones
 
-  <p><span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
-    <small>Refactor big methods at ease in a clean new container</small></p>
+  <aside class="notes" data-markdown>
+    No debería llevar mucho tiempo entender qué hace una sección de código, porque ya demasiado confuso es trabajar con software como para además agregarle complejidad innecesaria
 
-  <p>4. Questions time!</p>
+    Avdi Grimm lo llamó "ofrecimientos": qué facilita el diseño
+  </aside>
 </section>
 
 <section data-transition="none">
-  <h1>2: Ohai, nil!</h1>
+  <h1>Tests</h1>
+
+  <p>Para cambiar código sin cambiar comportamiento
+
+  <h1>Gestor de versiones</h1>
+
+  <p>Para abortar misión
+
+  <aside class="notes" data-markdown>
+    Dos prerequisitos
+
+    Escribir código y deshacerlo es TAN PRODUCTIVO COMO escribir código y publicarlo, se aprende del Software y del mundo real también
+  </aside>
+</section>
+
+<section data-transition="none">
+  <h1>Vamos a ver</h1>
+
+  <p>Código confuso -> <span style="color: green">Método que revela la intención</span>
+
+  <p>👉 <span style="color: #f33"><tt>"NoMethodError: Undefined method on nil"</tt></tt>
+
+  <p><span style="">Un Método Gigante</span>
+</section>
+
+<section data-transition="none">
+  <h1>Ey, nil! 👋🏼</h1>
 
 <pre><code data-trim contenteditable>
 > current_user.name
-NoMethodError: undefined method `name' for nil:NilClass
-        from (irb):3
-        from /Users/tute/.rbenv/versions/2.2.3/bin/irb:11:in `&lt;main&gt;'
+  NoMethodError:
+  undefined method `name'
+  for nil:NilClass
 </code></pre>
 </section>
 
 <section data-transition="none">
-  <h1>2: Ohai, nil!</h1>
+  <h1>Ey, nil! 👋🏼</h1>
 
-  <code style="color: blue; font-size: 140%">Undefined method `name' for nil</code>
+  <code style="color: #f33; font-size: 140%">Undefined method `name' for nil</code>
 
 <pre><code data-trim contenteditable>
-session[:current_user]      # => nil
-session[:current_dinozauh]  # => nil
-if false then 1 end         # => nil
-empty_method()              # => nil
+session[:user]      # nil
+session[:blog_pozt] # nil
+array[length + 1]   # nil
+@current_uZer       # nil
+if false then 1 end # nil
+empty_method()      # nil
 </code></pre>
 
-  <aside class="notes">
-
-    Where did this nil come from in my whole code base? From a blog post? From
-    a user? From a category?
+<aside class="notes" data-markdown>
+    Imaginen que reciben la excepción por mail.
 
     <br><br>
 
-    <li>Hash with `nil` as value for the key
-    <li>Hash with a key that doesn't exist
-    <li>An if that evaluates to false but there's no else branch
-    <li>An empty method
+    De dónde vino la excepción? De un artículo sin foto? De un visitante que no
+    se autenticó? De un error de tipeo al buscar en una cookie?
+
+    <br><br>
+
+    Puede venir de:
+
+    * un hash con `nil` como valor para una clave
+    * un hash donde se busca con una clave inexistente
+    * un arreglo indexado fuera de su rango
+    * una variable de instancia inexistente
+    * un condicional que evalúa a `false` pero no hay `else` definido
+    * un método vacío
   </aside>
 </section>
 
 <section data-transition="none">
-  <h1>2: Ohai, nil!</h1>
+  <h1>Ey, nil! 👋🏼</h1>
 
-  <p>A <span style="color:green">symbol</span> is better than <code style="color:red">nil</code>:</p>
+  <p>Un <span style="color:#0f0">símbolo</span> es mejor que <code style="color:#f33">nil</code>:</p>
 
 <pre><code data-trim contenteditable>
 def current_user
-  User.find_by(id: id) || :guest_user
+  User.find(id) || :guest_user
 end
 </code></pre>
 <pre><code data-trim contenteditable>
-current_user.email
+current_user.name
 </code></pre>
 
   <br>
-  <code style="color: green; font-size: 140%">undefined method `email' for :guest_user:Symbol</code>
+  <code style="color: #0f0; font-size: 140%">undefined method `name' for :guest_user:Symbol</code>
 
-  <aside class="notes">
-    Now we can find in project that symbol and trace the unexpected nil.
+  <aside class="notes" data-markdown>
+    Ahora sabemos sin pensarlo el contexto en el que falló
 
-    <br><br>
+    En este caso esperábamos un usuario y no un producto o categoría
 
-    So we were expecting a user, not a category
+    Pero seguimos necesitando `if`s en todos lados
   </aside>
 </section>
 
 <section data-transition="none">
-  <h1>2: ifs everywhere</h1>
+  <h1>ifs por doquier</h1>
 
-  <p>If potentially <code style="color:red">nil</code>, gotta surround
-  with an <code style="color:blue">if</code></p>
+  <p>Donde pueda haber <code style="color:#f33">nil</code> hay que chequear con <code style="color:#f33">if</code></p>
   <pre><code data-trim contenteditable>
-if current_user
-  "Hi #{current_user.name}!"
+if user
+  "Hi #{user.name}!"
 else
   "Hi guest!"
 end
@@ -301,71 +330,96 @@ end
 
   <aside class="notes">
 
-    Do you know your name or do I need to specify what's the "name" for nil?
+    "Sabés el nombre o te tengo que decir lo que es?"
 
     <br><br>
 
-    Easy to forget them. The logic of what does it mean for an object to be nil
-    is scattered accross the entire application.
+    La lógica sobre el significado de un visitante que no está autenticado se desparrama por toda el código
 
     <br><br>
 
-    A change on this logic needs to happen on many places of the app at once, a
-    problem we call "shotgun surgery".
+    Un cambio sobre esta lógica tiene que ocurrir en todos los lugares donde aparezca:
+    un cambio conceptual cambia muchos archivos diversos
 
     <br><br>
 
-    What will we do?
+    Siempre nos queda algún condicional en el tintero, generando un error en producción
 
+    <br><br>
+
+    Entonces, ¿qué hacemos?
   </aside>
 </section>
 
 <section data-transition="none">
-  <h1>Null Objects</h1>
+  <p>En lugar de <code style="color:#f33">nil</code>, devolver un nuevo
+    <span style="color:#0f0">objeto</span></p>
 
-  <p>Instead of <code style="color:red">nil</code>, return a new
-    <span style="color:green">object</span></p>
-
-<pre><code data-trim contenteditable>
-def current_user
-  User.find_by(id: id) || NullUser.new
-end
-</code></pre>
 <pre><code data-trim contenteditable>
 class NullUser
-  def name
-    'guest'
-  end
+  def name; 'guest'; end
 end
 </code></pre>
 <pre><code data-trim contenteditable>
-# if current_user
-  "Hi #{current_user.name}!"
+def user
+ User.find id || NullUser.new
+end
+</code></pre>
+<pre><code data-trim contenteditable>
+# if user
+  "Hi #{user.name}!"
 # else
 #   "Hi guest!"
 # end
 </code></pre>
+
+<aside class="notes" data-markdown>
+Ahora necesitamos ese único condicional, escondido en el operador `or`
+</aside>
 </section>
 
 <section>
-  <img src="imgs/lets-work-2.jpg" width="500">
+  <img src="imgs/lets-work Melba Roy Mouton.jpg" width="500">
+</section>
+
+<section>
+  <h2>Pero ¿porqué?</h2>
+  <img src="imgs/1-kart.gif" width="500">
+</section>
+<section data-transition="none">
+  <h2>Pero ¿porqué?</h2>
+  <img src="imgs/3-graph.png" width="500">
+</section>
+<section data-transition="none">
+  <h2>Pero ¿porqué?</h2>
+  <table>
+    <tr>
+    <td><img src="imgs/2-747.jpg" width="500">
+    <td><img src="imgs/2-747-cafe.png" width="500">
+    </tr>
+  </table>
+</section>
+<section data-transition="none">
+  <h2>Pero ¿porqué?</h2>
+  <img src="imgs/4-graph.png" width="500">
+</section>
+<section data-transition="none">
+  <h2>Pero ¿porqué?</h2>
+  <img src="imgs/5-graph.png" width="500">
 </section>
 
 <section data-transition="none">
-  <p><span style="color:blue">1. Unreadable Code -> Intention Revealing Method</span>
-    <small>Turns comments unnecessary. Code readsdescribes itself.</small></p>
+  <h1>Vamos a ver</h1>
 
-  <p><span style="color:blue">2. Undefined Method on nil -> Null Objects</span><br>
-    <small>Avoids <code>nil</code> objects and associated conditionals</small></p>
+  <p>Código confuso -> <span style="color: green">Método que revela la intención</span>
 
-  <p>-> <span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
-    <small>Refactor big methods at ease in a clean new container</small></p>
+  <p> <tt>"Undefined method on nil"</tt> -> <span style="color: green">Objecto Nulo</span><br>
 
-  <p>4. Questions time!</p>
+  <p>👉 <span style="color: #f33">Un Método Gigante</span>
 </section>
 
 <section>
-  <h1>3: Ginormous Method</h1>
+  <h1>Método Gigante</h1>
 
   <pre><code data-trim contenteditable style="font-size:120%">
 class ExportJob
@@ -418,57 +472,47 @@ class ExportJob
   end
   </code></pre>
 
-  <aside class="notes">
+  <aside class="notes" data-markdown>
+    La ansiedad del "por dónde empiezo". El método tiene variables y distintas piezas de lógica, todas MEZCLADAS en un MISMO CONTEXTO
 
-    "Where to even start" anxiety. The method is itself like a whole class
-    with variables, code, different pieces of logic.
+    Hay mucho ACOPLAMIENTO: cualquier cambio REPERCUTE en el método y potencialmente en su clase contenedora, que también es grande.
 
-    <br><br>
+    Si aplicamos "Método que revela la intención" tendremos:
 
-    Any change has repercusions both for the method and for its containing
-    class, which was also big. An instance variable in this method is also
-    used in others. I can't even ...!
+    * MUCHOS métodos en la clase, potencialmente colisionando con otros de similar nombre
+    * Métodos que requieren MUCHOS ARGUMENTOS (no vamos a polucionar el objeto con variables de instancia para lo que en verdad son variables locales)
+    * El riesgo de un sistema con tests fallando por demasiado tiempo, no pudiendo nunca cerrar el refactor
 
-    <br><br>
+    Es difícil TIRAR DE UN HILO sin desarmar el paño entero
 
-    Refactoring a big method is hard because there's coupling to behavior in
-    the same class. Changes here break something there and you have to
-    refactor it as well.
+    Hay mucho CONTEXTO COMPARTIDO, hay que aislar el gran método para que los cambios que apliquemos repercutan SÓLO en ese método
 
     <br><br>
 
-    Extracting Intention Revealing Methods might require too much state to be
-    passed around as arguments
-
-    <br><br>
-
-    There's too much context, we have to isolate the long method so that
-    any change we make affects only that method, and nothing else.
+    ¿Qué hacemos?
 
   </aside>
 </section>
 
 <section>
-  <h1>Extract Method Object</h1>
+  <h1>Extraer Objeto</h1>
 
   <ol>
-    <li>Create a <span style="color:green">class</span> with same arguments as BIG method</p>
-    <li>Copy & Paste the method's <span style="color:blue">body</span> in the new class</p>
-    <li><span style="color:blue">Replace</span> original method with a call to the new class</p>
-    <li>Apply "<span style="color:green">Intention Revealing Method</span>" to new class. Voilà.</p>
+    <li>Crear una <span style="color:#0f0">clase</span> que reciba los mismos argumentos del método
+    <li>Copiar y pegar el <span style="color:#0f0">método</span> en la nueva clase vacía
+    <li><span style="color:#0f0">Reemplazar</span> el método original con una llamada a la nueva clase
+    <li>Aplicar "<span style="color:#0f0">método que revela la intención</span>" sobre la nueva clase
   </ol>
 </section>
 
 <section>
-  <h1>Let's work!</h1>
-
-  <img src="imgs/lets-work-3.png" width="500">
+  <img src="imgs/lets-work-eniac-women-1940s-720x720.jpg" width="720">
 </section>
 
 <section data-transition="none">
-  <h1>Therapeutic Refactoring</h1>
+  <h1>Therapeutic<br>Refactoring</h1>
 
-  <h2>Katrina Owens</h2>
+  <h3>Katrina Owens</h3>
 
   <p>
     <a target="_blank" href="http://confreaks.com/videos/1071-cascadiaruby2012-therapeutic-refactoring">http://confreaks.com/videos/1071-cascadiaruby2012-therapeutic-refactoring</a>
@@ -476,43 +520,62 @@ class ExportJob
 </section>
 
 <section data-transition="none">
-  <h1>Next Steps: "<a target="_blank" href="http://robots.thoughtbot.com/sandi-metz-rules-for-developers">4 rules</a>"</h1>
+  <h1>Próximos pasos</h1>
 
-  <p>Classes of <span style="color:green">at most 100 lines of code</span>
-  <p>Methods of <span style="color:green">at most 5 lines of code</span>
-  <p>A method accepts <span style="color:green">at most 4 arguments</span>
-  <p>A controller instantiates <span style="color:green">only one object</span>
+  <h3><a target="_blank" href="http://robots.thoughtbot.com/sandi-metz-rules-for-developers">Las 4 reglas</a></h3>
+
+  <p>Clases de <span style="color:#0f0">100 líneas</span> o menos
+  <p>Métodos de <span style="color:#0f0">5 líneas</span> o menos
+  <p>Métodos con <span style="color:#0f0">4 argumentos</span> o menos
+  <p>Un controlador instancia <span style="color:#0f0">sólo un objeto</span>
 
   <aside class="notes">
-    <p>They are simple to explain and grasp, and encode many best practices.</p>
+    <p>Hay docenas de patrones de diseño y de refactoring, hay muchas métricas de calidad para software
 
-    <p>There's dozens of refactoring and design patterns, there's
-      many different software-related metrics.</p>
+    <p>Son reglas simples para explicar y entender, e implican muchas buenas prácticas
 
-    <p>No need to be an erudite: follow the four rules as they lead to green
-      pastures.</p>
+    <p>Estas reglas llevan naturalmente a respetar esos patrones y métricas, sin necesidad de saber nombrarlas como un niño dando una lección
+
+    <p>Siguiendo estas simples reglas van a ir a buenos puertos
+
+    <p>Cuánto refactorizar
   </aside>
 </section>
 
 
 <section data-transition="none">
-  <p><span style="color:blue">1. Unreadable Code -> Intention Revealing Method</span>
-    <small>Turns comments unnecessary. Code readsdescribes itself.</small></p>
+  <h1>Vimos</h1>
 
-  <p><span style="color:blue">2. Undefined Method on nil -> Null Objects</span><br>
-    <small>Avoids <code>nil</code> objects and associated conditionals</small></p>
+  <p>Código confuso -> <span style="color: green">Método que revela la intención</span>
 
-  <p><span style="color:blue">3. Ginormous Method -> Replace it with Method Object</span>
-    <small>Refactor big methods at ease in a clean new container</small></p>
+  <p> <tt>"Undefined method on nil"</tt> -> <span style="color: green">Objecto Nulo</span><br>
 
-  <p>4. Questions time!</p>
+  <p>Un Método Gigante -> <span style="color: green">Reemplazar con Objeto Método</span>
 </section>
 
 <section data-transition="none">
-  <img src="imgs/responsibility.png" width="500">
-  <br>
+  <h1>Preguntas!</h1>
 
-  <p>4. Questions time!</p>
+  <p>TuteCosta@gmail.com - @tutec</p>
+  <p>
+    <small>Software Developer at</small>
+    <br>
+    EpionHealth.com
+  </p>
+
+  <img src="imgs/eh.png" width="600">
+
+  <div class="fragment">
+    <tt>nil</tt> 🤓
+  </div>
+
+  <aside class="notes" data-markdown>
+    Soy Tute Costa, trabajo remotamente para Epion Health, una empresa relacionada a la Salud de Estados Unidos.
+
+    Nuestra aplicación "check in" permite a pacientes completar los formularios médicos necesarios antes de ver a su médico, de manera simple y rápida desde un iPad que se les otorga.
+
+    Procesamos casi 10.000 check ins por día, y somos buenos amigos con `nil` desde que empezó el proyecto, 4 años atrás. La empresa está creciendo así que hay diversión para rato.
+  </aside>
 </section>
 
 			</div>
@@ -523,7 +586,6 @@ class ExportJob
 		<script src="js/reveal.js"></script>
 
 		<script>
-
 			// Full list of configuration options available at:
 			// https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
@@ -544,7 +606,6 @@ class ExportJob
 					{ src: 'plugin/notes/notes.js', async: true }
 				]
 			});
-
 		</script>
 
 	</body>
