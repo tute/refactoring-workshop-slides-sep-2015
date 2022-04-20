@@ -85,10 +85,10 @@
 
 <section>
   <h1>Vamos a ver</h1>
-  <ol>
+  <ul>
     <li>Tres anomalías comunes en software
     <li>Patrones para refactorizarlas
-  </ol>
+  </ul>
 
   <aside class="notes">
     Los patrones permiten poner un límite sobre la cantidad de trabajo
@@ -98,11 +98,11 @@
 <section data-transition="none">
   <h1>Vamos a ver</h1>
 
-  <p>👉 <span style="color: #f33">Código confuso</span>
-
-  <p><span style=""><tt>"NoMethodError: Undefined method on nil"</tt></tt>
-
-  <p><span style="">Un Método Gigante</span>
+  <ol>
+    <li>👉 <span style="color: #f33">Código confuso</span><br><br>
+    <li><span style=""><tt>"NoMethodError: Undefined method on nil"</tt></tt><br><br>
+    <li><span style="">Un Método Gigante</span>
+  </ol>
 </section>
 
 <section data-transition="none">
@@ -212,9 +212,9 @@ def remove_duplicates?
   El diseño puede prescindir de instrucciones
 
   <aside class="notes" data-markdown>
-    No debería llevar mucho tiempo entender qué hace una sección de código, porque ya demasiado confuso es trabajar con software como para además agregarle complejidad innecesaria
+    No debería llevar mucho tiempo entender qué hace una sección de código, porque ya demasiado confuso es trabajar con software como para además agregarle complejidad no indispensable
 
-    Avdi Grimm lo llamó "ofrecimientos": qué facilita el diseño
+    Avdi Grimm lo llamó "ofrecimientos" ("affordances"): qué facilita el diseño intuitivamente, sin necesidad de pensarlo
   </aside>
 </section>
 
@@ -237,22 +237,29 @@ def remove_duplicates?
 <section data-transition="none">
   <h1>Vamos a ver</h1>
 
-  <p>Código confuso -> <span style="color: green">Método que revela la intención</span>
-
-  <p>👉 <span style="color: #f33"><tt>"NoMethodError: Undefined method on nil"</tt></tt>
-
-  <p><span style="">Un Método Gigante</span>
+  <ol>
+    <li>Código confuso -> <span style="color: green">Método que revela la intención</span><br><br>
+    <li>👉 <span style="color: #f33"><tt>"NoMethodError: Undefined method on nil"</tt></tt><br><br>
+    <li><span style="">Un Método Gigante</span>
+  </ol>
 </section>
 
 <section data-transition="none">
   <h1>Ey, nil! 👋🏼</h1>
 
 <pre><code data-trim contenteditable>
-> current_user.name
-  NoMethodError:
-  undefined method `name'
-  for nil:NilClass
+current_user.name
 </code></pre>
+
+<pre><code data-trim contenteditable>
+NoMethodError:
+undefined method `name'
+for nil:NilClass
+</code></pre>
+
+  <aside class="notes" data-markdown>
+    El PROBLEMA es que en producción no sabemos exactamente dónde falló
+  </aside>
 </section>
 
 <section data-transition="none">
@@ -279,7 +286,7 @@ empty_method()      # nil
 
     <br><br>
 
-    Puede venir de:
+    `nil` puede venir de:
 
     * un hash con `nil` como valor para una clave
     * un hash donde se busca con una clave inexistente
@@ -321,7 +328,7 @@ current_user.name
 
   <p>Donde pueda haber <code style="color:#f33">nil</code> hay que chequear con <code style="color:#f33">if</code></p>
   <pre><code data-trim contenteditable>
-if user
+if user != :guest_user
   "Hi #{user.name}!"
 else
   "Hi guest!"
@@ -338,7 +345,7 @@ end
 
     <br><br>
 
-    Un cambio sobre esta lógica tiene que ocurrir en todos los lugares donde aparezca:
+    Un cambio sobre esta lógica tiene que ocurrir en todos los lugares donde aparezca (ejemplo, internacionalización)
     un cambio conceptual cambia muchos archivos diversos
 
     <br><br>
@@ -355,16 +362,18 @@ end
   <p>En lugar de <code style="color:#f33">nil</code>, devolver un nuevo
     <span style="color:#0f0">objeto</span></p>
 
-<pre><code data-trim contenteditable>
+<pre class="fragment"><code data-trim contenteditable>
+def user
+  User.find(id) || NullUser.new
+end
+</code></pre>
+<pre class="fragment"><code data-trim contenteditable>
 class NullUser
   def name; 'guest'; end
 end
 </code></pre>
-<pre><code data-trim contenteditable>
-def user
- User.find id || NullUser.new
-end
-</code></pre>
+<div class="fragment">
+Y eliminar condionales:
 <pre><code data-trim contenteditable>
 # if user
   "Hi #{user.name}!"
@@ -372,6 +381,7 @@ end
 #   "Hi guest!"
 # end
 </code></pre>
+</div>
 
 <aside class="notes" data-markdown>
 Ahora necesitamos ese único condicional, escondido en el operador `or`
@@ -383,28 +393,28 @@ Ahora necesitamos ese único condicional, escondido en el operador `or`
 </section>
 
 <section>
-  <h2>Pero ¿porqué?</h2>
-  <img src="imgs/1-kart.gif" width="500">
+  <h2>Pero... ¿porqué?</h2>
+  <img class="fragment" src="imgs/1-kart.gif" width="500">
 </section>
 <section data-transition="none">
-  <h2>Pero ¿porqué?</h2>
+  <h2>Pero... ¿porqué?</h2>
   <img src="imgs/3-graph.png" width="500">
 </section>
 <section data-transition="none">
-  <h2>Pero ¿porqué?</h2>
+  <h2>Pero... ¿porqué?</h2>
   <table>
     <tr>
-    <td><img src="imgs/2-747.jpg" width="500">
     <td><img src="imgs/2-747-cafe.png" width="500">
+    <td><img class="fragment" src="imgs/2-747.jpg" width="500">
     </tr>
   </table>
 </section>
 <section data-transition="none">
-  <h2>Pero ¿porqué?</h2>
+  <h2>Pero... ¿porqué?</h2>
   <img src="imgs/4-graph.png" width="500">
 </section>
 <section data-transition="none">
-  <h2>Pero ¿porqué?</h2>
+  <h2>Pero... ¿porqué?</h2>
   <img src="imgs/5-graph.png" width="500">
 </section>
 
@@ -534,11 +544,11 @@ class ExportJob
 
     <p>Son reglas simples para explicar y entender, e implican muchas buenas prácticas
 
-    <p>Estas reglas llevan naturalmente a respetar esos patrones y métricas, sin necesidad de saber nombrarlas como un niño dando una lección
+    <p>Estas reglas llevan naturalmente a respetar esos patrones y métricas, sin necesidad de saber nombrarlas como niño dando la lección
 
     <p>Siguiendo estas simples reglas van a ir a buenos puertos
 
-    <p>Cuánto refactorizar
+    <p>Cuánto refactorizar: until-you-feel-almost-comfortable
   </aside>
 </section>
 
@@ -550,15 +560,15 @@ class ExportJob
 
   <p> <tt>"Undefined method on nil"</tt> -> <span style="color: green">Objecto Nulo</span><br>
 
-  <p>Un Método Gigante -> <span style="color: green">Reemplazar con Objeto Método</span>
+  <p>Un Método Gigante -> <span style="color: green">Reemplazar con "Method Object"</span>
 </section>
 
 <section data-transition="none">
   <h1>Preguntas!</h1>
 
-  <p>TuteCosta@gmail.com - @tutec</p>
+  <p>tutecosta@gmail.com - https://github.com/tute</p>
   <p>
-    <small>Software Developer at</small>
+    <small>Principal Engineer at</small>
     <br>
     EpionHealth.com
   </p>
@@ -572,9 +582,9 @@ class ExportJob
   <aside class="notes" data-markdown>
     Soy Tute Costa, trabajo remotamente para Epion Health, una empresa relacionada a la Salud de Estados Unidos.
 
-    Nuestra aplicación "check in" permite a pacientes completar los formularios médicos necesarios antes de ver a su médico, de manera simple y rápida desde un iPad que se les otorga.
+    Nuestra aplicación "check in" permite a pacientes completar los formularios médicos necesarios antes de ver a su médico, de manera simple y rápida desde un iPad o desde sus teléfonos.
 
-    Procesamos casi 10.000 check ins por día, y somos buenos amigos con `nil` desde que empezó el proyecto, 4 años atrás. La empresa está creciendo así que hay diversión para rato.
+    Procesamos 30.000 check-ins por día, y somos buenos amigos con `nil` desde que empezó el proyecto, 7 años atrás (2015). La empresa está creciendo así que hay diversión para rato.
   </aside>
 </section>
 
